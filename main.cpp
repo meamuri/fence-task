@@ -44,17 +44,18 @@ int main(int argc, const char * argv[]) {
 }
 
 int solve(int n, int q, vector<IntPair> const* painters) {
+    // Step 1. Make an array a of n vectors where a_i contains all the painters who paint the i-th panel
     auto* sections = new Section[n];
     for (int i = 0; i < n; ++i) {
         sections[i].relatedWithSectionPainters = new int[q];
         sections[i].paintersCount = 0;
     }
-    
-    // Make an array a of n vectors where a_i contains all the painters who paint the i-th panel
-    for (int i = 0; i < q; ++i) {
-        for (int j = painters->at(i).left - 1; j <= painters->at(i).right - 1; ++j) {
-            ++sections[j].paintersCount;
+
+    for (int i = 0; i < q; ++i) { // i -- painters
+        for (int j = painters->at(i).left - 1; j <= painters->at(i).right - 1; ++j) { // j -> sections of painters
+            // j is a num of section. Access to sections array and put new painter to related section (i is painter)
             sections[j].relatedWithSectionPainters[sections[j].paintersCount] = i;
+            ++sections[j].paintersCount;
         }
     }
 
@@ -84,7 +85,7 @@ int solve(int n, int q, vector<IntPair> const* painters) {
             count[sections[i].relatedWithSectionPainters[0]][sections[i].relatedWithSectionPainters[1]]++;
             count[sections[i].relatedWithSectionPainters[i]][sections[i].relatedWithSectionPainters[0]]++;
         } else if (sections[i].paintersCount == 1) {
-            for (int j = 0; j < sections[i].paintersCount; ++j) {
+            for (int j = 0; j < q; ++j) {
                 if (j != sections[i].relatedWithSectionPainters[0]) {
                     count[sections[i].relatedWithSectionPainters[0]][j]++;
                     count[j][sections[i].relatedWithSectionPainters[0]]++;
