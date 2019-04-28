@@ -18,7 +18,7 @@ struct Section {
 };
 
 IntPair inputToPair(string const& input);
-int solve(int n, int q, IntPair const* painters);
+int solve(int n, int q, vector<IntPair> const* painters);
 
 int main(int argc, const char * argv[]) {
     // input q and n
@@ -29,21 +29,21 @@ int main(int argc, const char * argv[]) {
     int q = sizes.right;
 
     // input array
-    IntPair* painters = new IntPair[q];
+    vector<IntPair> painters(q);
     for (int i = 0; i < q; ++i) {
         getline(cin, input);
         IntPair pair = inputToPair(input);
-        painters[i] = pair;
+        painters[i] = (pair);
     }
 
-    int res = solve(n, q, painters);
+    int res = solve(n, q, &painters);
     cout << res;
     
-    delete[] painters;
+    painters.clear();
     return 0;
 }
 
-int solve(int n, int q, IntPair const* painters) {
+int solve(int n, int q, vector<IntPair> const* painters) {
     auto* sections = new Section[n];
     for (int i = 0; i < n; ++i) {
         sections[i].relatedWithSectionPainters = new int[q];
@@ -52,7 +52,7 @@ int solve(int n, int q, IntPair const* painters) {
     
     // Make an array a of n vectors where a_i contains all the painters who paint the i-th panel
     for (int i = 0; i < q; ++i) {
-        for (int j = painters[i].left - 1; j <= painters[i].right - 1; ++j) {
+        for (int j = painters->at(i).left - 1; j <= painters->at(i).right - 1; ++j) {
             ++sections[j].paintersCount;
             sections[j].relatedWithSectionPainters[sections[j].paintersCount] = i;
         }
@@ -65,8 +65,6 @@ int solve(int n, int q, IntPair const* painters) {
             ++total;
         }
     }
-    
-    cout << "DEBUG. Total: " << total << endl;
     
     // make a 2D array 'count' that is initialized to 0. Here,
     // 'count[i][j]' is 'the number of sections that have no one painting them if i and j are removed.
