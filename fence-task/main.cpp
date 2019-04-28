@@ -1,9 +1,4 @@
 //
-//  main.cpp
-//  fence-task
-//
-//  Created by Rom Dr on 25/04/2019.
-//  Copyright © 2019 Rom Dr. All rights reserved.
 //
 
 #include <iostream>
@@ -18,8 +13,8 @@ struct IntPair {
 };
 
 struct Section {
-    int* relatedWithSectionPainers;
-    int painersCount;
+    int* relatedWithSectionPainters;
+    int paintersCount;
 };
 
 IntPair inputToPair(string const& input);
@@ -32,8 +27,7 @@ int main(int argc, const char * argv[]) {
     IntPair sizes = inputToPair(input);
     int n = sizes.left;
     int q = sizes.right;
-    cout << "DEBUG " << n << " " << q << " " << endl;
-    
+
     // input array
     IntPair* painters = new IntPair[q];
     for (int i = 0; i < q; ++i) {
@@ -41,7 +35,7 @@ int main(int argc, const char * argv[]) {
         IntPair pair = inputToPair(input);
         painters[i] = pair;
     }
-    
+
     int res = solve(n, q, painters);
     cout << res;
     
@@ -50,24 +44,24 @@ int main(int argc, const char * argv[]) {
 }
 
 int solve(int n, int q, IntPair const* painters) {
-    Section* sections = new Section[n];
+    auto* sections = new Section[n];
     for (int i = 0; i < n; ++i) {
-        sections[i].relatedWithSectionPainers = new int[q];
-        sections[i].painersCount = 0;
+        sections[i].relatedWithSectionPainters = new int[q];
+        sections[i].paintersCount = 0;
     }
     
     // Make an array a of n vectors where a_i contains all the painters who paint the i-th panel
     for (int i = 0; i < q; ++i) {
         for (int j = painters[i].left - 1; j <= painters[i].right - 1; ++j) {
-            ++sections[j].painersCount;
-            sections[j].relatedWithSectionPainers[sections[j].painersCount] = i;
+            ++sections[j].paintersCount;
+            sections[j].relatedWithSectionPainters[sections[j].paintersCount] = i;
         }
     }
-    
+
     // Find 'total', the total number of painted panels using all of the painters.
     int total = 0;
     for (int i = 0; i < n; ++i) {
-        if (sections[i].painersCount > 0) {
+        if (sections[i].paintersCount > 0) {
             ++total;
         }
     }
@@ -88,14 +82,14 @@ int solve(int n, int q, IntPair const* painters) {
     // So, loop over all elements of a. If a[i].size()==2, then count[a[i][0]][a[i][1]]++ and count[a[i][1]][a[i][0]]++.
     // If a[i].size()==1, then for all j ≠ a[i][0], perform count[a[i][0]][j]++ and count[j][a[i][0]]++.
     for (int i = 0; i < n; ++i) {
-        if (sections[i].painersCount == 2) {
-            count[sections[i].relatedWithSectionPainers[0]][sections[i].relatedWithSectionPainers[1]]++;
-            count[sections[i].relatedWithSectionPainers[i]][sections[i].relatedWithSectionPainers[0]]++;
-        } else if (sections[i].painersCount == 1) {
-            for (int j = 0; j < sections[i].painersCount; ++j) {
-                if (j != sections[i].relatedWithSectionPainers[0]) {
-                    count[sections[i].relatedWithSectionPainers[0]][j]++;
-                    count[j][sections[i].relatedWithSectionPainers[0]]++;
+        if (sections[i].paintersCount == 2) {
+            count[sections[i].relatedWithSectionPainters[0]][sections[i].relatedWithSectionPainters[1]]++;
+            count[sections[i].relatedWithSectionPainters[i]][sections[i].relatedWithSectionPainters[0]]++;
+        } else if (sections[i].paintersCount == 1) {
+            for (int j = 0; j < sections[i].paintersCount; ++j) {
+                if (j != sections[i].relatedWithSectionPainters[0]) {
+                    count[sections[i].relatedWithSectionPainters[0]][j]++;
+                    count[j][sections[i].relatedWithSectionPainters[0]]++;
                 }
             }
         }
@@ -120,7 +114,7 @@ int solve(int n, int q, IntPair const* painters) {
     delete[] count;
     
     for (int i = 0; i < n; ++i) {
-        delete[] sections[i].relatedWithSectionPainers;
+        delete[] sections[i].relatedWithSectionPainters;
     }
     delete[] sections;
     
@@ -128,8 +122,8 @@ int solve(int n, int q, IntPair const* painters) {
 }
 
 IntPair inputToPair(string const& input) {
-    size_t space_pos = input.find(" ");
+    size_t space_pos = input.find(' ');
     int n = stoi(input.substr(0, space_pos));
     int q = stoi(input.substr(space_pos, input.length() - 1));
-    return IntPair{n, q};
+    return {n, q};
 }
